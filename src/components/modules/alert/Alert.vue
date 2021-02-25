@@ -7,7 +7,7 @@
         </div>
         <div v-else class="space-round">
           <div class="btnCommon cancel" @click="cancelEvent()">取消</div>
-          <div class="btnCommon success" @click="successlEvent()">确定</div>
+          <div class="btnCommon success" @click="successEvent()">确定</div>
         </div>
       </div>
       <div class="mask" @click="closeMask()"></div>

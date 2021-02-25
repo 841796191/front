@@ -173,6 +173,12 @@ export default {
       }).then((res) => {
         // 登录成功
         if (res.code === 200) {
+          // 登录成功,保存用户基本信息
+          this.$store.commit('setUserInfo', res.data)
+          // 修改登录状态
+          this.$store.commit('setIsLogin', true)
+          // 本地存储token
+          this.$store.commit('setToken', res.token)
           this.username = ''
           this.password = ''
           this.code = ''
@@ -180,6 +186,7 @@ export default {
             this.$refs.observer.reset()
           })
 
+          this.$router.push({ name: 'index' })
           console.log(res)
           // 验证码错误
         } else if (res.code === 401) {

@@ -3,10 +3,14 @@
 import axios from 'axios'
 import errorHandle from './errorHandle'
 
+// 取消请求的函数
+const CancelToken = axios.CancelToken
+
 // 使用es6封装axios
 class HttpRequest {
   constructor (baseUrl) {
     this.baseUrl = baseUrl
+    this.pending = {} // 取消请求的变量
   }
 
   // 获取axios配置
@@ -21,9 +25,25 @@ class HttpRequest {
     return config
   }
 
+  // 执行取消请求的函数
+  removePending (key, isRequest = false) {
+    // if条件为true说明对应url已经发起请求,取消上一次请求,执行cancel方法
+    if (this.pending[key] && isRequest) {
+      this.pending[key]('取消重复请求')
+    }
+    delete this.pending[key]
+  }
+
   // 设定拦截器
   interceptors (instance) {
     instance.interceptors.request.use((config) => {
+      // 利用拦截器取消重复请求
+      const key = config.url + '&' + config.method
+      this.removePending(key, true)
+      config.cancelToken = new CancelToken((c) => {
+        // 记录发起的请求
+        this.pending[key] = c
+      })
       return config
     }, (err) => {
       errorHandle(err)
@@ -31,6 +51,8 @@ class HttpRequest {
     })
 
     instance.interceptors.response.use((res) => {
+      const key = res.config.url + '&' + res.config.method
+      this.removePending(key)
       if (res.status === 200) {
         return Promise.resolve(res.data)
       } else {

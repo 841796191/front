@@ -185,8 +185,9 @@ export default {
     },
 
     async submit () {
-      // 读取校验结果,校验成功则调用login发起登录请求
+      // 读取校验结果,校验成功则调用reg发起登录请求
       const isValid = await this.$refs.observer.validate()
+      // console.log('isValid: ' + isValid)
       if (!isValid) {
         return
       }
