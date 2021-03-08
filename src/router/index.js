@@ -23,6 +23,12 @@ const PicUpload = () => import(/* webpackChunName: 'picupload' */ '../components
 const Accounts = () => import(/* webpackChunName: 'accounts' */ '../components/user/common/Accounts.vue')
 const MyPost = () => import(/* webpackChunName: 'mypost' */ '../components/user/common/MyPost.vue')
 const MyCollection = () => import(/* webpackChunName: 'mycollection' */ '../components/user/common/MyCollection.vue')
+const NotFound = () => import(/* webpackChunName: 'notfound' */ '../views/NotFound.vue')
+const Confirm = () => import(/* webpackChunName: 'confirm' */ '../views/Confirm.vue')
+const Reset = () => import(/* webpackChunName: 'reset' */ '../views/Reset.vue')
+const Add = () => import(/* webpackChunName: 'add' */ '../components/contents/Add.vue')
+const Edit = () => import(/* webpackChunName: 'edit' */ '../components/contents/Edit.vue')
+const Detail = () => import(/* webpackChunName: 'detail' */ '../components/contents/Detail.vue')
 
 Vue.use(VueRouter)
 
@@ -49,12 +55,22 @@ const routes = [
     component: Login
   },
   {
+    path: '/confirm',
+    name: 'confirm',
+    component: Confirm
+  },
+  {
+    path: '/reset',
+    name: 'reset',
+    component: Reset
+  },
+  {
     path: '/reg',
     name: 'reg',
     component: Reg,
     beforeEnter: (to, from, next) => {
-      console.log('TCL: from', from) // 从哪个页面来
-      console.log('TCL: to', to) // 到哪个页面
+      // console.log('TCL: from', from) // 从哪个页面来
+      // console.log('TCL: to', to) // 到哪个页面
       if (from.name === 'login') {
         next()
       } else {
@@ -66,6 +82,46 @@ const routes = [
     path: '/forget',
     name: 'forget',
     component: Forget
+  },
+  {
+    path: '/add',
+    name: 'add',
+    component: Add,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/edit/:tid',
+    props: true,
+    name: 'edit',
+    component: Edit,
+    meta: { requiresAuth: true },
+    beforeEnter: (to, from, next) => {
+      // 正常情况 从detail页面到编辑页面,并且帖子未结帖
+      if (['detail', 'mypost'].indexOf(from.name) !== -1 && to.params.page && to.params.page.isEnd === '0') {
+        next()
+      } else {
+        // 用户在edit页面刷新的情况
+        const editData = localStorage.getItem('editData')
+        // 若有未编辑完的内容则继续
+        if (editData && editData !== '') {
+          const editobj = JSON.parse(editData)
+          if (editobj.isEnd === '0') {
+            next()
+          } else {
+            next('/')
+          }
+        } else {
+          // 没有未编辑完的内容,返回首页
+          next('/')
+        }
+      }
+    }
+  },
+  {
+    path: '/detail/:tid',
+    name: 'detail',
+    props: true,
+    component: Detail
   },
   {
     path: '/user/:uid', // 我的主页
@@ -137,6 +193,14 @@ const routes = [
         component: Others
       }
     ]
+  },
+  {
+    path: '/404',
+    component: NotFound
+  },
+  {
+    path: '*',
+    redirect: '/404'
   }
 ]
 // 如果使用linkActiveClass,则会有 根路径和当前路径两个路由激活
@@ -161,6 +225,10 @@ router.beforeEach((to, from, next) => {
       store.commit('setToken', token)
       store.commit('setUserInfo', userInfo)
       store.commit('setIsLogin', true)
+
+      if (!store.state.ws) {
+        store.commit('initWebsocket', {})
+      }
     } else {
       localStorage.clear()
     }

@@ -34,33 +34,7 @@ export default {
       catalog: '',
       isEnd: false, // 控制 更多按钮 开关, true为最后一页
       current: '', // 当前栏目
-      lists: [ // 文章列表
-        {
-          uid: {
-            name: 'imooc',
-            isVip: 1
-          },
-          title: '大前端课程',
-          content: '',
-          created: '2019-10-1 01:00:00',
-          catalog: 'ask',
-          fav: 40,
-          reads: 10,
-          answer: 0,
-          status: 0,
-          isTop: 0,
-          tags: [
-            {
-              name: '精华',
-              class: 'layui-bg-red'
-            },
-            {
-              name: '热门',
-              class: 'layui-bg-blue'
-            }
-          ]
-        }
-      ]
+      lists: [] // 文章列表
     }
   },
 
@@ -122,7 +96,7 @@ export default {
       }
       getList(options).then((res) => {
         this.isRepeat = false // 请求结束
-        console.log(res)
+        // console.log(res)
         // 对于异常的判断 res.code非200,给出提示
         // 判断是否lists长度为0,如果为0直接赋值
         // 当lists长度不为0,后面请求的数据与前面的数据拼接
@@ -146,7 +120,6 @@ export default {
     },
 
     nextpage () {
-      this.page++
       this._getLists()
     },
 

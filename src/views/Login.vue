@@ -36,7 +36,7 @@
                   <div class="layui-form-item">
                     <label for="L_pass" class="layui-form-label">密码</label>
                     <!-- 表单验证 -->
-                    <validation-provider name="password" rules="required|min:6" v-slot="{errors}">
+                    <validation-provider name="password" rules="required|min:6|max:16" v-slot="{errors}">
                       <div class="layui-input-inline">
                         <input
                           type="password"
@@ -83,7 +83,7 @@
                       <router-link :to="{name: 'forget'}">忘记密码？</router-link>
                     </span>
                   </div>
-                  <div class="layui-form-item fly-form-app">
+                  <!-- <div class="layui-form-item fly-form-app">
                     <span>或者使用社交账号登入</span>
                     <a
                       href
@@ -97,7 +97,7 @@
                       class="iconfont icon-weibo"
                       title="微博登入"
                     ></a>
-                  </div>
+                  </div> -->
                 </form>
               </div>
             </div>
@@ -130,7 +130,6 @@ export default {
   },
 
   mounted () {
-    window.vue = this // 方便控制台测试
     // 生成标识符与对应验证码一起存储
     let sid = ''
     if (localStorage.getItem('sid')) {
@@ -173,7 +172,9 @@ export default {
       }).then((res) => {
         // 登录成功
         if (res.code === 200) {
-          // 登录成功,保存用户基本信息
+          // 存储用户登录名,因为后台已经拦截返回的登录名,所以前端自己加上
+          res.data.username = this.username
+          // 登录成功,vuex保存用户基本信息
           this.$store.commit('setUserInfo', res.data)
           // 修改登录状态
           this.$store.commit('setIsLogin', true)

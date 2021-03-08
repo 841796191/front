@@ -56,7 +56,7 @@
                   <div class="layui-form-item">
                     <validation-provider
                       name="password"
-                      rules="required|min:6|confirmed:confirmation"
+                      rules="required|min:6|max:16|confirmed:confirmation"
                       v-slot="{errors}"
                     >
                       <div class="layui-row">

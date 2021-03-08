@@ -6,7 +6,7 @@
       <a href="javascript:;" class="fly-link" id="LAY_signinHelp" @click="showInfo()">说明</a>
       <i class="fly-mid"></i>
       <a href="javascript:;" class="fly-link" id="LAY_signinTop" @click="showTop()">活跃榜<span class="layui-badge-dot"></span></a>
-      <span class="fly-signin-days">已连续签到<cite>{{ count }}</cite>天</span>
+      <span class="fly-signin-days" v-show="isSign || isLogin">已连续签到<cite>{{ count }}</cite>天</span>
     </div>
     <div class="fly-panel-main fly-signin-main">
       <template v-if="!isSign">
@@ -16,7 +16,7 @@
 
       <!-- 已签到状态 -->
       <template v-else>
-        <button class="layui-btn layui-btn-disabled">今日已签到</button>
+        <button class="layui-btn layui-btn-disabled">{{ msg }}</button>
         <span>获得了<cite>{{ favs }}</cite>积分</span>
       </template>
     </div>
@@ -41,11 +41,12 @@ export default {
 
   data () {
     return {
-      isLogin: this.$store.state.isLogin,
       isShow: false, // 控制说明栏
       showList: false, // 控制签到榜
       current: 0, // 签到榜当前栏
-      isSign: false // 签到状态
+      isSign: false, // 签到状态
+      msg: '',
+      ctrl: ''
     }
   },
 
@@ -53,7 +54,7 @@ export default {
     // 判断用户的上一次签到时间与签到状态
     // 如果用户上一次签到时间与当天签到日期相差1天,允许用户进行签到
     const isSign = this.$store.state.userInfo.isSign
-    const lastSign = this.$sotre.state.userInfo.lastSign
+    const lastSign = this.$store.state.userInfo.lastSign
     const nowDate = moment().format('YYYY-MM-DD')
     const lastDate = moment(lastSign).format('YYYY-MM-DD')
     const diff = moment(nowDate).diff(moment(lastDate), 'day')
@@ -62,10 +63,22 @@ export default {
       this.isSign = false
     } else {
       this.isSign = isSign
+      if (diff === 0 && isSign) {
+        this.nextSign()
+      } else {
+        this.msg = '今日已签到'
+      }
     }
   },
 
   computed: {
+    userInfo () {
+      return this.$store.state.userInfo
+    },
+    isLogin () {
+      return this.$store.state.isLogin
+    },
+
     favs () {
       const count = parseInt(this.count)
       let result = 0
@@ -96,6 +109,17 @@ export default {
         }
       } else {
         return 0
+      }
+    }
+  },
+
+  watch: {
+    userInfo (newval, oldval) {
+      if (newval.isSign === true) {
+        this.nextSign()
+        this.isSign = true
+      } else {
+        this.isSign = false
       }
     }
   },
@@ -140,6 +164,34 @@ export default {
         // 签到成功后修改vuex中的数据
         this.$store.commit('setUserInfo', user)
       })
+      this.nextSign()
+    },
+
+    nextSign () {
+      clearInterval(this.ctrl)
+      const newDate = moment().add(1, 'day').format('YYYY-MM-DD')
+      let seconds = moment(newDate + ' 00:00:00').diff(moment(), 'second')
+
+      let hour = Math.floor(seconds / 3600)
+      let min = Math.floor(seconds % 3600 / 60)
+      let second = seconds % 60
+      this.msg = `签到倒计时 ${hour}:${min < 10 ? '0' + min : min}:${second < 10 ? '0' + second : second}`
+
+      this.ctrl = setInterval(() => {
+        seconds = moment(newDate + ' 00:00:00').diff(moment(), 'second')
+
+        hour = Math.floor(seconds / 3600)
+        min = Math.floor(seconds % 3600 / 60)
+        second = seconds % 60
+        this.msg = `签到倒计时 ${hour}:${min < 10 ? '0' + min : min}:${second < 10 ? '0' + second : second}`
+        if (seconds <= 0) {
+          clearInterval(this.ctrl)
+          this.isSign = false
+          const user = this.$store.state.userInfo
+          user.isSign = false
+          this.$store.commit('setUserInfo', user)
+        }
+      }, 1000)
     }
   }
 }
