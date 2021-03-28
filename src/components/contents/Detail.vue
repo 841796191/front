@@ -24,15 +24,19 @@
             class="layui-badge"
             :class="tag.class">{{ tag.name }}</span>
 
-            <!-- <div class="fly-admin-box" data-id="123">
-              <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
+            <!-- 管理员操作 -->
+            <div v-hasRole="'admin'">
+              <div class="fly-admin-box" data-id="123">
+                <span v-hasPermission="['get','delete']" class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
 
-              <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span>
-              <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;">取消置顶</span>
+                <span v-if="page.isTop === '0'" class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span>
+                <span v-else class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;">取消置顶</span>
 
-              <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1">加精</span>
-              <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;">取消加精</span>
-            </div> -->
+                <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1">加精</span>
+                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;">取消加精</span> -->
+              </div>
+            </div>
+
             <span class="fly-list-nums">
               <a href="#comment"><i class="iconfont" title="回答">&#xe60c;</i> {{page.answer}}</a>
               <i class="iconfont" title="人气">&#xe60b;</i>{{page.reads}}
@@ -477,6 +481,11 @@ export default {
   text-align: right;
   border-top: 1px dotted #eaeaea;
   background: #f8f8f8;
+}
+
+.fly-admin-box {
+  margin-left: 0;
+  margin-top: 15px;
 }
 
 .fly-detail-info {

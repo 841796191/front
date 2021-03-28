@@ -19,10 +19,11 @@
 </template>
 
 <script>
-import { getList } from '@/api/content'
+import listMix from '../../mixin/list'
 import ListItem from './ListItem'
 export default {
   name: 'list',
+  mixins: [listMix],
   data () {
     return {
       status: '',
@@ -59,70 +60,7 @@ export default {
     }
   },
 
-  mounted () {
-    // console.log(this.$route.params['catalog'])
-    // 当有路由跳转时获取分类代码
-    /* eslint-disable */
-    let catalog = this.$route.params['catalog']
-    if (typeof catalog !== 'undefined' && catalog !== '') {
-      this.catalog = catalog
-    }
-    // 获取文章列表
-    this._getLists()
-  },
-
   methods: {
-    init () {
-      this.page = 0
-      this.lists = []
-      this.isEnd = false
-      this._getLists()
-    },
-
-    _getLists () {
-      if (this.isRepeat) return // isRepeat为true则当前正在请求数据,避免重复请求
-      if (this.isEnd) return // isEnd为true,则是最后一页
-
-      this.isRepeat = true // 正在请求
-
-      const options = {
-        catalog: this.catalog,
-        isTop: 0,
-        page: this.page,
-        limit: this.limit,
-        sort: this.sort,
-        tag: this.tag,
-        status: this.status
-      }
-      getList(options).then((res) => {
-        this.isRepeat = false // 请求结束
-        // console.log(res)
-        // 对于异常的判断 res.code非200,给出提示
-        // 判断是否lists长度为0,如果为0直接赋值
-        // 当lists长度不为0,后面请求的数据与前面的数据拼接
-        if (res.code === 200) {
-          // 判断res.data的长度,如果小于20条,则是最后页
-          if (res.data.length < this.limit) {
-            this.isEnd = true
-          }
-          if (this.lists.length === 0) {
-            this.lists = res.data
-          } else {
-            this.lists = this.lists.concat(res.data)
-          }
-        }
-      }).catch((err) => {
-        this.isRepeat = false
-        if (err) {
-          this.$alert(err.message)
-        }
-      })
-    },
-
-    nextpage () {
-      this._getLists()
-    },
-
     search (val) {
       if (typeof val === 'undefined' && this.current === '') {
         return

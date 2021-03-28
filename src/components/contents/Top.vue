@@ -14,41 +14,44 @@
 </template>
 
 <script>
+import listMix from '../../mixin/list'
 import ListItem from './ListItem'
 export default {
   name: 'top',
+  mixins: [listMix],
   data () {
     return {
-      page: 0,
-      limit: 20,
-      lists: [
-        {
-          uid: {
-            name: 'imooc',
-            isVip: 1
-          },
-          title: '大前端课程',
-          content: '',
-          created: '2019-10-01 01:00:00',
-          catalog: 'ask',
-          fav: 40,
-          isEnd: 0,
-          reads: 10,
-          answer: 0,
-          status: 0,
-          isTop: 1,
-          tags: [
-            {
-              name: '精华',
-              class: 'layui-bg-red'
-            },
-            {
-              name: '热门',
-              class: 'layui-bg-blue'
-            }
-          ]
-        }
-      ]
+      isTop: 1
+      // page: 0,
+      // limit: 20,
+      // lists: [
+      //   {
+      //     uid: {
+      //       name: 'imooc',
+      //       isVip: 1
+      //     },
+      //     title: '大前端课程',
+      //     content: '',
+      //     created: '2019-10-01 01:00:00',
+      //     catalog: 'ask',
+      //     fav: 40,
+      //     isEnd: 0,
+      //     reads: 10,
+      //     answer: 0,
+      //     status: 0,
+      //     isTop: 1,
+      //     tags: [
+      //       {
+      //         name: '精华',
+      //         class: 'layui-bg-red'
+      //       },
+      //       {
+      //         name: '热门',
+      //         class: 'layui-bg-blue'
+      //       }
+      //     ]
+      //   }
+      // ]
     }
   },
   components: {
