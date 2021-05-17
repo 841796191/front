@@ -58,17 +58,17 @@ export default {
           name: '建议',
           path: '/index/advise',
           isNew: false
-        },
-        {
-          name: '公告',
-          path: '/index/notice',
-          isNew: false
-        },
-        {
-          name: '动态',
-          path: '/index/logs',
-          isNew: false
         }
+        // {
+        //   name: '公告',
+        //   path: '/index/notice',
+        //   isNew: false
+        // },
+        // {
+        //   name: '动态',
+        //   path: '/index/logs',
+        //   isNew: false
+        // }
       ],
       isLogin: this.$store.state.isLogin // 是否登录
     }

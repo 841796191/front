@@ -145,4 +145,8 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.fly-list-badge {
+  vertical-align: middle;
+  top: 1px;
+}
 </style>
