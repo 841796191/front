@@ -1,24 +1,18 @@
 # front
 
-## Project setup
+## 安装依赖包
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 项目启动
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 项目构建
 ```
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 其余命令可查看package.json文件的scripts属性
